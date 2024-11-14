@@ -1,24 +1,24 @@
 
-#include <chrono>
-#include <string>
+#include <chrono> // the chrono lib is used to handle time based operations
+#include <string> // string operations 
 
-#include "mdclog/mdclog.h"
-#include "rmr/RIC_message_types.h"
+#include "mdclog/mdclog.h" // for loging 
+#include "rmr/RIC_message_types.h" // for interacting with RIC
 #include "ricxfcpp/message.hpp"
 #include "ricxfcpp/messenger.hpp"
 //#include "pistache/string_logger.h"
 //#include "pistache/tcp.h"
 
-#include "nexran.h"
-#include "e2ap.h"
+#include "nexran.h" // refer this repo https://github.com/openaicellular/nexran as this has all the closed loop functionalities 
+#include "e2ap.h"// package for the e2 instance 
 #include "e2sm.h"
-#include "e2sm_nexran.h"
-#include "e2sm_kpm.h"
+#include "e2sm_nexran.h" //nexran e2 communication mdules  
+#include "e2sm_kpm.h"//package for keyperformace key performance metric 
 #include "e2sm_zylinium.h"
-#include "restserver.h"
+#include "restserver.h"//
 //#include "restserver.cc"
 
-#include <curl/curl.h>
+#include <curl/curl.h> //curl lib for cpp
 using namespace std;
 
 int ue_counter = 0; // Counter used to iterate through each UE the report
