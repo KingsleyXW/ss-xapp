@@ -1,5 +1,5 @@
 sudo swapoff -a
-cd ~/oaic/oaic/RIC-Deployment/tools/k8s/bin
+cd ~/oaic/OAIC/RIC-Deployment/tools/k8s/bin
 ./gen-cloud-init.sh
 sudo ./k8s-1node-cloud-init-k_1_16-h_2_17-d_cur.sh
 sudo kubectl create ns ricinfra
@@ -12,7 +12,7 @@ sudo docker tag oaic/e2:5.5.0 localhost:5001/ric-plt-e2:5.5.0
 sudo docker push localhost:5001/ric-plt-e2:5.5.0
 cd ~/oaic/oaic/RIC-Deployment/bin
 sudo ./deploy-ric-platform -f ../RECIPE_EXAMPLE/PLATFORM/example_recipe_oran_e_release_modified_e2.yaml
-cd ~/oaic/oaic/asn1c
+cd ~/oaic/OAIC/asn1c
 git checkout velichkov_s1ap_plus_option_group
 autoreconf -iv
 ./configure
@@ -30,4 +30,4 @@ cmake ../ -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 make -j`nproc`
 sudo make install
 sudo ldconfig
-y || sudo srslte_install_configs.sh user --force
+yes || sudo srslte_install_configs.sh user --force
