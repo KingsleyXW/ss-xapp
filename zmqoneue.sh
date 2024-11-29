@@ -39,13 +39,13 @@ fi
 
 sleep $SLEEPINT
 
-echo "Creating Slice (name=fast)": ; echo
+echo "Creating Slice (name=)": ; echo
 curl -i -X POST -H "Content-type: application/json" -d '{"name":"fast","allocation_policy":{"type":"proportional","share":1024}}' http://${SS_XAPP}:8000/v1/slices ; echo ; echo
 echo Listing Slices: ; echo
 curl -i -X GET http://${SS_XAPP}:8000/v1/slices ; echo ; echo
 
 sleep $SLEEPINT
-
+fast
 echo "Creating Slice (name=slow)": ; echo
 curl -i -X POST -H "Content-type: application/json" -d '{"name":"slow","allocation_policy":{"type":"proportional","share":256}}' http://${SS_XAPP}:8000/v1/slices ; echo ; echo
 echo Listing Slices: ; echo
