@@ -117,32 +117,64 @@ echo "Getting Slice details (fast-2):"
 curl -i -X GET http://${SS_XAPP}:8000/v1/slices/fast-2
 echo
 
-echo "Throttling the targeted Slice (fast-1):"
-curl -i -X PUT -H "Content-type: application/json" -d '{
-    "allocation_policy": {
-        "type": "proportional",
-        "share": 0,
-        "throttle": true,
-        "throttle_threshold": -1,
-        "throttle_period": 1800,
-        "throttle_share": 10,
-        "throttle_target": 1
-    }
-}' http://${SS_XAPP}:8000/v1/slices/fast-1
-echo
+# echo "Throttling the targeted Slice (fast-1):"
+# curl -i -X PUT -H "Content-type: application/json" -d '{
+#     "allocation_policy": {
+#         "type": "proportional",
+#         "share": 0,
+#         "throttle": true,
+#         "throttle_threshold": -1,
+#         "throttle_period": 1800,
+#         "throttle_share": 10,
+#         "throttle_target": 1
+#     }
+# }' http://${SS_XAPP}:8000/v1/slices/fast-1
+# echo
 
-echo "Throttling the targeted Slice (fast-1):"
-curl -i -X PUT -H "Content-type: application/json" -d '{
-    "allocation_policy": {
-        "type": "proportional",
-        "share": 1024,
-        "throttle": false,
-        "throttle_threshold": -1,
-        "throttle_period": 1800,
-        "throttle_share": 10,
-        "throttle_target": 1
-    }
-}' http://${SS_XAPP}:8000/v1/slices/fast-1
-echo
+# echo "Throttling the targeted Slice (fast-1):"
+# curl -i -X PUT -H "Content-type: application/json" -d '{
+#     "allocation_policy": {
+#         "type": "proportional",
+#         "share": 1024,
+#         "throttle": false,
+#         "throttle_threshold": -1,
+#         "throttle_period": 1800,
+#         "throttle_share": 10,
+#         "throttle_target": 1
+#     }
+# }' http://${SS_XAPP}:8000/v1/slices/fast-1
+# echo
 
-echo "Script completed successfully!"
+# echo "Script completed successfully!"
+# working, tried and tested part
+
+
+# Making the above commented script to be more dynamic witht the use of variables 
+# making a function so that it can be reused 
+
+
+# Function to apply throttle settings
+apply_throttle() {
+    local slice=$1
+    local share=$2
+    local throttle=$3
+    local throttle_period=$4
+    local throttle_share=$5
+
+    echo "Applying throttle settings to slice ($slice):"
+    curl -i -X PUT -H "Content-type: application/json" -d "{
+        \"allocation_policy\": {
+            \"type\": \"proportional\",
+            \"share\": $share,
+            \"throttle\": $throttle,
+            \"throttle_threshold\": -1,
+            \"throttle_period\": $throttle_period,
+            \"throttle_share\": $throttle_share,
+            \"throttle_target\": 1
+        }
+    }" http://${SS_XAPP}:8000/v1/slices/$slice
+    echo
+}
+
+# Use parameters passed by Python
+apply_throttle "$1" "$2" "$3" "$4" "$5"
