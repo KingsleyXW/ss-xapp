@@ -1,9 +1,0 @@
---- command='srsenb --enb.n_prb=100 --enb.name=enb1 --enb.enb_id=0x19B --rf.device_name=zmq --rf.device_args=fail_on_disconnect=true,tx_port=tcp://*:2000,rx_port=tcp://localhost:2009,id=enb,base_srate=23.04e6 --ric.agent.remote_ipv4_addr=10.98.59.79 --log.all_level=warn --ric.agent.log_level=debug --log.filename=stdout --ric.agent.local_ipv4_addr=10.0.0.122 --ric.agent.local_port=5006 --slicer.enable=1 --slicer.workshare=0' version=20.10.1 signal=11 date='27/11/2024 18:43:12' ---
-	srsenb(+0x2097e1) [0x564f09ae77e1]
-	/lib/x86_64-linux-gnu/libc.so.6(+0x43090) [0x7fae92857090]
-	/lib/x86_64-linux-gnu/libstdc++.so.6(_ZSt18_Rb_tree_incrementPSt18_Rb_tree_node_base+0x24) [0x7fae92c321e4]
-	srsenb(+0x211cf4) [0x564f09aefcf4]
-	srsenb(+0xa1dfd) [0x564f0997fdfd]
-	/lib/x86_64-linux-gnu/libpthread.so.0(+0x8609) [0x7fae930a8609]
-	/lib/x86_64-linux-gnu/libc.so.6(clone+0x43) [0x7fae92933353]
-
