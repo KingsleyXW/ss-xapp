@@ -116,8 +116,8 @@ echo
 echo "Getting Slice details (fast-2):"
 curl -i -X GET http://${SS_XAPP}:8000/v1/slices/fast-2
 echo
-
-echo "Throttling the targeted Slice (fast-1):"
+#apply_throttle("fast-2", 0, False, 2000, 10)
+echo "Throttling the targeted Slice (fast-2):"
 curl -i -X PUT -H "Content-type: application/json" -d '{
     "allocation_policy": {
         "type": "proportional",
@@ -128,21 +128,5 @@ curl -i -X PUT -H "Content-type: application/json" -d '{
         "throttle_share": 10,
         "throttle_target": 1
     }
-}' http://${SS_XAPP}:8000/v1/slices/fast-1
+}' http://${SS_XAPP}:8000/v1/slices/fast-2
 echo
-
-echo "Throttling the targeted Slice (fast-1):"
-curl -i -X PUT -H "Content-type: application/json" -d '{
-    "allocation_policy": {
-        "type": "proportional",
-        "share": 1024,
-        "throttle": false,
-        "throttle_threshold": -1,
-        "throttle_period": 1800,
-        "throttle_share": 10,
-        "throttle_target": 1
-    }
-}' http://${SS_XAPP}:8000/v1/slices/fast-1
-echo
-
-echo "Script completed successfully!"
