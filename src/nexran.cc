@@ -34,8 +34,8 @@ bool counterCondition; // Condition used if there is a third UE (COUNTER)
 bool maliciousUE = false;
 bool slicecheck=0;
 
-//int tx_threshold = 105;
-int tx_threshold = 500;
+//int tx_threshold = 500;
+int tx_threshold = 105;
 
 
 char url[1024];
@@ -377,6 +377,8 @@ bool App::handle(e2sm::kpm::KpmIndication *kind)
 	policy->getMetrics().add(it->second);
     }
 
+
+   // go throught this part
     // First, check if any slices should be released from throttling.
     for (auto it = slices.begin(); it != slices.end(); ++it) {
 	std::string slice_name = it->first;
@@ -599,212 +601,219 @@ for (auto it = report->ues.begin(); it != report->ues.end(); ++it) {
 			{
 				thirdUeOverThreshold = false;
 			}
+
+			//  the below commented code has the mutex.lock(); and mutex.unlock(); which are used for Memory management
 			
-			if(avg_tx_1 >= tx_threshold){
+			// if(avg_tx_1 >= tx_threshold){
 				
-				maliciousUE = true;
+			// 	maliciousUE = true;
 
-				tx_threshold *= 10;
+			// 	tx_threshold *= 10;
 
-				mdclog_write(MDCLOG_DEBUG, "UE1 imsi: %s", ue1imsi.c_str());
-				mdclog_write(MDCLOG_DEBUG, "UE2 imsi: %s", ue2imsi.c_str());
+			// 	mdclog_write(MDCLOG_DEBUG, "UE1 imsi: %s", ue1imsi.c_str());
+			// 	mdclog_write(MDCLOG_DEBUG, "UE2 imsi: %s", ue2imsi.c_str());
 
-				mdclog_write(MDCLOG_DEBUG,"UE[%d] found MALICIOUS",
-				ue_name);
+			// 	mdclog_write(MDCLOG_DEBUG,"UE[%d] found MALICIOUS",
+			// 	ue_name);
 
-				AppError *ae = nullptr;
+			// 	AppError *ae = nullptr;
 
-				//delete slicing binding to UE
+			// 	//delete slicing binding to UE
 
-				//need imsi and what slice the UE is bound to.
+			// 	//need imsi and what slice the UE is bound to.
 
-				mdclog_write(MDCLOG_DEBUG,"UNBINDING START");
-				mutex.unlock();
-				unbind_ue_slice(ue1imsi,slice1,&ae);
-				mutex.lock();
-				mdclog_write(MDCLOG_DEBUG,"UNBINDING SUCCESS");
+			// 	mdclog_write(MDCLOG_DEBUG,"UNBINDING START");
+			// 	mutex.unlock();
+			// 	unbind_ue_slice(ue1imsi,slice1,&ae);
+			// 	mutex.lock();
+			// 	mdclog_write(MDCLOG_DEBUG,"UNBINDING SUCCESS");
 
-				/*
-				mutex.unlock();
-				del(App::ResourceType::UeResource, ue1imsi, &ae);
-				mutex.lock(); */
+			// 	/*
+			// 	mutex.unlock();
+			// 	del(App::ResourceType::UeResource, ue1imsi, &ae);
+			// 	mutex.lock(); */
 
-				/*rapidjson::Document d;
-				d.Parse(request.body().c_str());
-				string writer == "imsi\":\"001010123456789\",\"tmsi\":\"\",\"crnti\":\"\",\"status\":{\"connected\":false}"
-				Ue *ue = Ue::create(d,&ae); */
+			// 	/*rapidjson::Document d;
+			// 	d.Parse(request.body().c_str());
+			// 	string writer == "imsi\":\"001010123456789\",\"tmsi\":\"\",\"crnti\":\"\",\"status\":{\"connected\":false}"
+			// 	Ue *ue = Ue::create(d,&ae); */
 				
-				//mutex.unlock();
-				/*
-				// Create a JSON object that represents the UE. 
-				rapidjson::Document d; 
-				d.SetObject(); 
-				d.AddMember("imsi", rapidjson::Value().SetString("001010123456789"), d.GetAllocator());  */
+			// 	//mutex.unlock();
+			// 	/*
+			// 	// Create a JSON object that represents the UE. 
+			// 	rapidjson::Document d; 
+			// 	d.SetObject(); 
+			// 	d.AddMember("imsi", rapidjson::Value().SetString("001010123456789"), d.GetAllocator());  */
 
-				// Call the postUE() method. 
-				//server.postUe(d, &ae);
-				//add(App::ResourceType::UeResource,ue,writer,&ae);
-				//mutex.lock();
+			// 	// Call the postUE() method. 
+			// 	//server.postUe(d, &ae);
+			// 	//add(App::ResourceType::UeResource,ue,writer,&ae);
+			// 	//mutex.lock();
 
-				//slice create does not have a non REST way to create slices. For now just use curl to create an initial malicious slice
+			// 	//slice create does not have a non REST way to create slices. For now just use curl to create an initial malicious slice
 
-				// Create a response object. 
-				/*
+			// 	// Create a response object. 
+			// 	/*
 
-				Pistache::Http::ResponseWriter response;
-				server.postUe(d, response); 
-				// Check the response code. 
-				if (response.status() != Pistache::Http::Code::OK) 
-				{ std::cerr << "Error: " << response.status() << std::endl; return 1; } 
-				// Check the response body. 
-				const std::string& body = response.body(); 
-				if (body != "UE created successfully.") 
-				{ std::cerr << "Error: unexpected response body: " << body << std::endl; return 1; }
+			// 	Pistache::Http::ResponseWriter response;
+			// 	server.postUe(d, response); 
+			// 	// Check the response code. 
+			// 	if (response.status() != Pistache::Http::Code::OK) 
+			// 	{ std::cerr << "Error: " << response.status() << std::endl; return 1; } 
+			// 	// Check the response body. 
+			// 	const std::string& body = response.body(); 
+			// 	if (body != "UE created successfully.") 
+			// 	{ std::cerr << "Error: unexpected response body: " << body << std::endl; return 1; }
 				
-				*/
+			// 	*/
 
-				mdclog_write(MDCLOG_DEBUG,"BINDING START");
-				//bind to malicious UE to secure slice
-				mutex.unlock();
-				bind_ue_slice(ue1imsi,slice2,&ae);
-				mutex.lock();
-				mdclog_write(MDCLOG_DEBUG,"BINDING SUCCESS");
-					//print something here telling us wht happened
+			// 	mdclog_write(MDCLOG_DEBUG,"BINDING START");
+			// 	//bind to malicious UE to secure slice
+			// 	mutex.unlock();
+			// 	bind_ue_slice(ue1imsi,slice2,&ae);
+			// 	mutex.lock();
+			// 	mdclog_write(MDCLOG_DEBUG,"BINDING SUCCESS");
+			// 		//print something here telling us wht happened
 
-				sprintf(url, "http://127.0.0.1:8000/v1/ues/%s", ue1imsi.c_str());
+			// 	sprintf(url, "http://127.0.0.1:8000/v1/ues/%s", ue1imsi.c_str());
 
-			}
-			else if(avg_tx_2 >= tx_threshold)
-			{
+			// }
+			// else if(avg_tx_2 >= tx_threshold)
+			// {
 
-				maliciousUE = true;
+			// 	maliciousUE = true;
 
-				tx_threshold *= 10;
+			// 	tx_threshold *= 10;
 
-				mdclog_write(MDCLOG_DEBUG, "UE1 imsi: %s", ue1imsi.c_str());
-				mdclog_write(MDCLOG_DEBUG, "UE2 imsi: %s", ue2imsi.c_str());
-				mdclog_write(MDCLOG_DEBUG,"UE[%d] found MALICIOUS",
-				ue_name);
-				//slice_name.c_str(),new_share_factors[slice_name]);
+			// 	mdclog_write(MDCLOG_DEBUG, "UE1 imsi: %s", ue1imsi.c_str());
+			// 	mdclog_write(MDCLOG_DEBUG, "UE2 imsi: %s", ue2imsi.c_str());
+			// 	mdclog_write(MDCLOG_DEBUG,"UE[%d] found MALICIOUS",
+			// 	ue_name);
+			// 	//slice_name.c_str(),new_share_factors[slice_name]);
 
-				AppError *ae = nullptr;
+			// 	AppError *ae = nullptr;
 
-				//delete slicing binding to UE
+			// 	//delete slicing binding to UE
 
-				//need imsi and what slice the UE is bound to.
-				mdclog_write(MDCLOG_DEBUG,"UNBINDING START");
-				mutex.unlock();
-				unbind_ue_slice(ue2imsi,slice1,&ae);
-				mutex.lock();
-				mdclog_write(MDCLOG_DEBUG,"UNBINDING SUCCESS");
+			// 	//need imsi and what slice the UE is bound to.
+			// 	mdclog_write(MDCLOG_DEBUG,"UNBINDING START");
+			// 	mutex.unlock();
+			// 	unbind_ue_slice(ue2imsi,slice1,&ae);
+			// 	mutex.lock();
+			// 	mdclog_write(MDCLOG_DEBUG,"UNBINDING SUCCESS");
 
-				//slice create does not have a non REST way to create slices. For now just use curl to create an initial malicious slice
-
-
-				//create secure slice
-				// string x="MALICIOUS";
-				// d=x.c_str();
-				// Slice *slice = Slice::create(d,&ae);
+			// 	//slice create does not have a non REST way to create slices. For now just use curl to create an initial malicious slice
 
 
-				mdclog_write(MDCLOG_DEBUG,"BINDING START");
-				//bind to malicious UE to secure slice
-				mutex.unlock();
-				bind_ue_slice(ue2imsi,slice2,&ae);
-				mutex.lock();
-				mdclog_write(MDCLOG_DEBUG,"BINDING SUCCESS");
-
-				//print something here
-
-				sprintf(url, "http://127.0.0.1:8000/v1/ues/%s", ue2imsi.c_str());
-
-			}				
-			else if(thirdUeOverThreshold)
-			{
-				maliciousUE = true;
-
-				tx_threshold *= 10;
-
-				//mdclog_write(MDCLOG_DEBUG, "UE1 imsi: %s", ue1imsi.c_str());
-				//mdclog_write(MDCLOG_DEBUG, "UE2 imsi: %s", ue2imsi.c_str());
-				mdclog_write(MDCLOG_DEBUG,"UE[%d] found MALICIOUS",
-				ue_name);
-				//slice_name.c_str(),new_share_factors[slice_name]);
-
-				AppError *ae = nullptr;
-
-				//delete slicing binding to UE
-
-				//need imsi and what slice the UE is bound to.
-				mdclog_write(MDCLOG_DEBUG,"UNBINDING START");
-				mutex.unlock();
-				unbind_ue_slice(ue3imsi,slice1,&ae);
-				mutex.lock();
-				mdclog_write(MDCLOG_DEBUG,"UNBINDING SUCCESS");
-
-				//slice create does not have a non REST way to create slices. For now just use curl to create an initial malicious slice
+			// 	//create secure slice
+			// 	// string x="MALICIOUS";
+			// 	// d=x.c_str();
+			// 	// Slice *slice = Slice::create(d,&ae);
 
 
-				//create secure slice
-				// string x="MALICIOUS";
-				// d=x.c_str();
-				// Slice *slice = Slice::create(d,&ae);
+			// 	mdclog_write(MDCLOG_DEBUG,"BINDING START");
+			// 	//bind to malicious UE to secure slice
+			// 	mutex.unlock();
+			// 	bind_ue_slice(ue2imsi,slice2,&ae);
+			// 	mutex.lock();
+			// 	mdclog_write(MDCLOG_DEBUG,"BINDING SUCCESS");
+
+			// 	//print something here
+
+			// 	sprintf(url, "http://127.0.0.1:8000/v1/ues/%s", ue2imsi.c_str());
+
+			// }				
+			// else if(thirdUeOverThreshold)
+			// {
+			// 	maliciousUE = true;
+
+			// 	tx_threshold *= 10;
+
+			// 	//mdclog_write(MDCLOG_DEBUG, "UE1 imsi: %s", ue1imsi.c_str());
+			// 	//mdclog_write(MDCLOG_DEBUG, "UE2 imsi: %s", ue2imsi.c_str());
+			// 	mdclog_write(MDCLOG_DEBUG,"UE[%d] found MALICIOUS",
+			// 	ue_name);
+			// 	//slice_name.c_str(),new_share_factors[slice_name]);
+
+			// 	AppError *ae = nullptr;
+
+			// 	//delete slicing binding to UE
+
+			// 	//need imsi and what slice the UE is bound to.
+			// 	mdclog_write(MDCLOG_DEBUG,"UNBINDING START");
+			// 	mutex.unlock();
+			// 	unbind_ue_slice(ue3imsi,slice1,&ae);
+			// 	mutex.lock();
+			// 	mdclog_write(MDCLOG_DEBUG,"UNBINDING SUCCESS");
+
+			// 	//slice create does not have a non REST way to create slices. For now just use curl to create an initial malicious slice
 
 
-				mdclog_write(MDCLOG_DEBUG,"BINDING START");
-				//bind to malicious UE to secure slice
-				mutex.unlock();
-				bind_ue_slice(ue3imsi,slice2,&ae);
-				mutex.lock();
-				mdclog_write(MDCLOG_DEBUG,"BINDING SUCCESS");
+			// 	//create secure slice
+			// 	// string x="MALICIOUS";
+			// 	// d=x.c_str();
+			// 	// Slice *slice = Slice::create(d,&ae);
 
-				//print something here
 
-				sprintf(url, "http://127.0.0.1:8000/v1/ues/%s", ue3imsi.c_str());
+			// 	mdclog_write(MDCLOG_DEBUG,"BINDING START");
+			// 	//bind to malicious UE to secure slice
+			// 	mutex.unlock();
+			// 	bind_ue_slice(ue3imsi,slice2,&ae);
+			// 	mutex.lock();
+			// 	mdclog_write(MDCLOG_DEBUG,"BINDING SUCCESS");
 
-			}		
+			// 	//print something here
 
-			memset(TOTAL_TX, 0, sizeof(TOTAL_TX));
-			memset(COUNTER, 0, sizeof(COUNTER));
+			// 	sprintf(url, "http://127.0.0.1:8000/v1/ues/%s", ue3imsi.c_str());
 
-			if (maliciousUE) // If there is a malicious UE
-			{
-				mdclog_write(MDCLOG_INFO, "Deleting url: %s", url);
-				curl_global_init(CURL_GLOBAL_DEFAULT);
-				CURL *curl = curl_easy_init();
+			// }
 
-				curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-				curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-				curl_easy_setopt(curl, CURLOPT_URL, url);
-				curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L); 
-				CURLcode ret = curl_easy_perform(curl);	
-				std::string readBuffer;
 
-				if(ret != CURLE_OK) {
-					std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(ret) << std::endl;
-				} else {
-					// Print the response body
-					std::cout << "Response body:\n" << readBuffer << std::endl;
-				}
 
-				mdclog_write(MDCLOG_DEBUG, "Deleted Ue");
+		// Suggested by Yuhi, I am not sure as it is related code is realated to mal
+		
+		
+		// 	memset(TOTAL_TX, 0, sizeof(TOTAL_TX));
+		// 	memset(COUNTER, 0, sizeof(COUNTER));
 
-				curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:8000/v1/slices/secure_slice");
-				ret = curl_easy_perform(curl);	
+		// 	if (maliciousUE) // If there is a malicious UE
+		// 	{
+		// 		mdclog_write(MDCLOG_INFO, "Deleting url: %s", url);
+		// 		curl_global_init(CURL_GLOBAL_DEFAULT);
+		// 		CURL *curl = curl_easy_init();
+
+		// 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+		// 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+		// 		curl_easy_setopt(curl, CURLOPT_URL, url);
+		// 		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L); 
+		// 		CURLcode ret = curl_easy_perform(curl);	
+		// 		std::string readBuffer;
+
+		// 		if(ret != CURLE_OK) {
+		// 			std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(ret) << std::endl;
+		// 		} else {
+		// 			// Print the response body
+		// 			std::cout << "Response body:\n" << readBuffer << std::endl;
+		// 		}
+
+		// 		mdclog_write(MDCLOG_DEBUG, "Deleted Ue");
+
+		// 		curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:8000/v1/slices/secure_slice");
+		// 		ret = curl_easy_perform(curl);	
 
 				
-				if(ret != CURLE_OK) {
-					std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(ret) << std::endl;
-				} else {
-					// Print the response body
-					std::cout << "Response body:\n" << readBuffer << std::endl;
-				}
+		// 		if(ret != CURLE_OK) {
+		// 			std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(ret) << std::endl;
+		// 		} else {
+		// 			// Print the response body
+		// 			std::cout << "Response body:\n" << readBuffer << std::endl;
+		// 		}
 
-				curl_easy_cleanup(curl);
-				curl_global_cleanup();
-				mdclog_write(MDCLOG_DEBUG, "Deleted Secure Slice");
-			}
-		}
+		// 		curl_easy_cleanup(curl);
+		// 		curl_global_cleanup();
+		// 		mdclog_write(MDCLOG_DEBUG, "Deleted Secure Slice");
+		// 	}
+		// }
 
 		if (ue_counter + 1 == activeUes)
 		{

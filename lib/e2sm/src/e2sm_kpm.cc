@@ -29,6 +29,37 @@
 #include "E2SM_KPM_PerSliceReportListItemFormat.h"
 #include "E2SM_KPM_PerSliceReportListItem.h"
 
+
+// added for loging
+void log_slice_metrics(const std::string &slice_name, const SlicePerformanceIndicators &psi) {
+    std::ofstream log_file("slice_metrics.log", std::ios::app);
+    if (!log_file.is_open()) {
+        std::cerr << "Failed to open slice_metrics.log for writing." << std::endl;
+        return;
+    }
+
+    log_file << "Slice Name: " << slice_name << std::endl;
+    log_file << "TX Packets: " << psi.tx_pkts << std::endl;
+    log_file << "TX Errors: " << psi.tx_errors << std::endl;
+    log_file << "TX Bitrate: " << psi.tx_brate << " bps" << std::endl;
+    log_file << "RX Packets: " << psi.rx_pkts << std::endl;
+    log_file << "RX Errors: " << psi.rx_errors << std::endl;
+    log_file << "RX Bitrate: " << psi.rx_brate << " bps" << std::endl;
+    log_file << "DL CQI: " << psi.dl_cqi << std::endl;
+    log_file << "DL RI: " << psi.dl_ri << std::endl;
+    log_file << "DL PMI: " << psi.dl_pmi << std::endl;
+    log_file << "UL PHR: " << psi.ul_phr << std::endl;
+    log_file << "UL SINR: " << psi.ul_sinr << " dB" << std::endl;
+    log_file << "UL MCS: " << psi.ul_mcs << std::endl;
+    log_file << "UL Samples: " << psi.ul_samples << std::endl;
+    log_file << "DL MCS: " << psi.dl_mcs << std::endl;
+    log_file << "DL Samples: " << psi.dl_samples << std::endl;
+    log_file << "----------------------------------------" << std::endl;
+
+    log_file.close();
+}
+
+
 namespace e2sm
 {
 namespace kpm
@@ -193,6 +224,10 @@ static KpmReport *decode_kpm_indication(
 				report->slices[slice_name].dl_prbs = dl_prbs;
 				report->slices[slice_name].ul_prbs = ul_prbs;
 			    }
+				//log these 
+				// create a file and write all the files out on the 
+				// file 
+				// ineffieient, Have a meeting with Yuhui 
 			    report->slices[slice_name].tx_pkts = psi->tx_pkts;
 			    report->slices[slice_name].tx_errors = psi->tx_errors;
 			    report->slices[slice_name].tx_brate = psi->tx_brate;
@@ -208,6 +243,9 @@ static KpmReport *decode_kpm_indication(
 			    report->slices[slice_name].ul_samples = psi->ul_samples;
 			    report->slices[slice_name].dl_mcs = psi->dl_mcs;
 			    report->slices[slice_name].dl_samples = psi->dl_samples;
+
+				 // Log the metrics for this slice
+       			 log_slice_metrics(slice_name, report->slices[slice_name]);
 			}
 		    }
 		}

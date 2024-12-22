@@ -26,7 +26,8 @@ class two_ue(gr.top_block):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 23.04e6
+        #self.samp_rate = samp_rate = 23.04e6
+        self.samp_rate = samp_rate = 23.04e7
         self.min_gain = min_gain = 0
         self.max_gain = max_gain = 1
 

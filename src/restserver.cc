@@ -425,6 +425,7 @@ void RestServer::putSlice(
 
     d.Parse(request.body().c_str());
 
+
     if (!app->update(App::ResourceType::SliceResource,name,d,&ae)) {
 	if (ae) {
 	    ae->serialize(writer);

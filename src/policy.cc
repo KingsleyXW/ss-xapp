@@ -37,7 +37,7 @@ int ProportionalAllocationPolicy::maybeStartThrottling()
 
     throttle_saved_share = share;
     is_throttling = true;
-    throttle_end = std::time(nullptr) + throttle_period;
+    throttle_share = std::time(nullptr) + throttle_period;
 
     // Caller must call setShare() on the new value.
     if (throttle_share > 0)

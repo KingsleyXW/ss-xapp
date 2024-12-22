@@ -92,6 +92,7 @@ Slice *Slice::create(rapidjson::Document& d,AppError **ae)
 
 	if (!throttle_share && !throttle_target)
 	    throttle_share = 128;
+	//work 
 
 	allocation_policy = new ProportionalAllocationPolicy(
 	    obj["allocation_policy"]["share"].GetInt(),auto_equalize,
